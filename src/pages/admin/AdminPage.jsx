@@ -1,33 +1,39 @@
+
 import { BiBookBookmark } from "react-icons/bi";
 import { CiSpeaker } from "react-icons/ci";
 import { FaRegUser } from "react-icons/fa6";
 import { GoGraph } from "react-icons/go";
 import { Link, Route, Routes } from "react-router-dom";
+import AdminItemPage from "./adminItemPage";
+import AddProductPage from "./addItemPage";
 
 export default function AdminPage() {
     return (
         <div className='w-full h-screen flex'>
-            <div className='w-[400px] h-full bg-green-200'>
-                <button className='w-full h-[40px] text-[25px] font-bold flex justify-center items-center'>
+            <div className='w-[300px] h-full bg-green-200'>
+                <Link to="/admin" className='w-full h-[40px] text-[25px] font-bold flex justify-center items-center'>
                     <GoGraph />Dashboard
-                </button>
-                <Link to="/admin/booking" className='w-full h-[40px] text-[25px] font-bold flex justify-center items-center  '>
+                </Link>
+                <Link to="/admin/booking" className='w-full h-[40px] text-[25px] font-bold flex justify-center items-center'>
                     <BiBookBookmark />Booking
                 </Link>
-                <button className='w-full h-[40px] text-[25px] font-bold flex justify-center items-center'>
+                <Link to="/admin/items" className='w-full h-[40px] text-[25px] font-bold flex justify-center items-center'>
                     <CiSpeaker />Items
-                </button>
-                <button className='w-full h-[40px] text-[25px] font-bold flex justify-center items-center'>
+                </Link>
+                <Link to="/admin/users" className='w-full h-[40px] text-[25px] font-bold flex justify-center items-center'>
                     <FaRegUser /> Users
-                </button>
-
+                </Link>
             </div>
-            <div className='w-[calc(100vw-400px)] bg-blue-900'>
-                <Routes path="/">
-                <Route path="/booking" element={<h1>booking page</h1>} />
+            
+            <div className='w-[calc(100vw-300px)]'>
+                <Routes>
+                    <Route path="/" element={<div>Dashboard Content</div>} />
+                    <Route path="/booking" element={<div>Booking Content</div>} />
+                    <Route path="/items" element={<AdminItemPage/>} />
+                    <Route path="/items/add" element={<AddProductPage/>} />
+                    <Route path="/users" element={<div>Users Content</div>} />
                 </Routes>
             </div>
-
         </div>
     )
 }

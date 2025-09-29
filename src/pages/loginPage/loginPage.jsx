@@ -11,19 +11,21 @@ export default function LoginPage() {
     function handleOnSubmit(e) {
         e.preventDefault();
         console.log(email, password)
-        axios.post("http://localhost:3000/api/users/login",{
-            email:email,
-            password : password
-        }).then((res)=>{
+        axios.post("http://localhost:3000/api/users/login", {
+            email: email,
+            password: password
+        }).then((res) => {
             console.log(res)
             toast.success("Login success")
             const user = res.data.user
-            if(user.role === "admin"){
+            localStorage.setItem("token", res.data.token) //local storage eke token eka save wenawa
+
+            if (user.role === "admin") {
                 navigate("/admin")
-            }else{
+            } else {
                 navigate("/")
             }
-        }).catch((err)=>{
+        }).catch((err) => {
             console.log(err)
             toast.error(err.response.data.error)
         })

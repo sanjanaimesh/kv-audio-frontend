@@ -6,24 +6,17 @@ import Testing from './components/Testing';
 import LoginPage from './pages/loginPage/loginPage';
 import { Toaster } from 'react-hot-toast';
 
-
 function App() {
-
-
   return (
     <BrowserRouter>
       <Toaster/>
-      <Routes path="/*">
-        <Route path='/testing' element={<Testing/>}></Route>
-        <Route path='/login' element={<LoginPage/>}></Route>
-        <Route path="/admin/*" element={<AdminPage/>}/>
-        <Route path="/*" element={<HomePage/>}/>
-        
+      <Routes>
+        <Route path='/testing' element={<Testing/>} />
+        <Route path='/login' element={<LoginPage/>} />
+        <Route path="/admin/*" element={<AdminPage/>} />
+        <Route path="/*" element={<HomePage/>} />
       </Routes>
     </BrowserRouter>
-    
-    
-
   )
 }
 
