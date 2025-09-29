@@ -1,27 +1,27 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function AddProductPage() {
-    const [productKey, setProductKey] = useState("");
-    const [productName, setProductName] = useState("");
-    const [productPrice, setProductPrice] = useState(0);
-    const [productCategory, setProductCategory] = useState("audio");
-    const [productDimension, setProductDimension] = useState("");
-    const [productDescription, setProductDescription] = useState("");
-    const [loading, setLoading] = useState(false);
+export default function UpdateItemPage() {
+    const location = useLocation();   
     const navigate = useNavigate();
 
-    async function handleAddItem() {
-        // Validation
+    const [productKey, setProductKey] = useState(location.state?.key || "");
+    const [productName, setProductName] = useState(location.state?.name || "");
+    const [productPrice, setProductPrice] = useState(location.state?.price || 0);
+    const [productCategory, setProductCategory] = useState(location.state?.category || "audio");
+    const [productDimension, setProductDimension] = useState(location.state?.dimensions || "");
+    const [productDescription, setProductDescription] = useState(location.state?.descrition || "");
+    const [loading, setLoading] = useState(false);
+
+    async function handleUpdateItem() {
         if (!productKey || !productName || !productPrice || !productDimension || !productDescription) {
             toast.error("Please fill all fields");
             return;
         }
 
         const token = localStorage.getItem("token");
-        
         if (!token) {
             toast.error("Please login first");
             return;
@@ -30,31 +30,29 @@ export default function AddProductPage() {
         setLoading(true);
 
         try {
-            const result = await axios.post(
-                "http://localhost:3000/api/products",
+            const result = await axios.put(   
+                `http://localhost:3000/api/products/${productKey}`,
                 {
-                    key: productKey,
                     name: productName,
                     price: Number(productPrice),
                     category: productCategory,
                     dimensions: productDimension,
-                    descrition: productDescription
+                    descrition: productDescription,
                 },
                 {
                     headers: {
-                        Authorization: "Bearer " + token
-                    }
+                        Authorization: "Bearer " + token,
+                    },
                 }
             );
 
             console.log(result);
-            toast.success("Product added successfully!");
+            toast.success("Product updated successfully!");
             navigate("/admin/items", { replace: true });
-            
         } catch (error) {
             console.error(error);
             if (error.response) {
-                toast.error(error.response.data.message || error.response.data.error || "Failed to add product");
+                toast.error(error.response.data.message || error.response.data.error || "Failed to update product");
             } else {
                 toast.error("Network error. Please check your connection");
             }
@@ -69,16 +67,17 @@ export default function AddProductPage() {
 
     return (
         <div className="w-full h-full flex flex-col justify-center items-center p-6">
-            <h1 className="text-2xl font-bold mb-4">Add Items</h1>
+            <h1 className="text-2xl font-bold mb-4">Update Item</h1>
 
             <div className="w-[400px] border rounded-lg shadow-md p-6 flex flex-col gap-3">
                 <input
+                
                     onChange={(e) => setProductKey(e.target.value)}
                     value={productKey}
                     type="text"
                     placeholder="Product Key"
                     className="border px-3 py-2 rounded"
-                    disabled={loading}
+                    disabled
                 />
 
                 <input
@@ -127,14 +126,14 @@ export default function AddProductPage() {
                     disabled={loading}
                 />
 
-                <button 
-                    onClick={handleAddItem}
+                <button
+                    onClick={handleUpdateItem}
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={loading}
                 >
-                    {loading ? "Adding..." : "Add"}
+                    {loading ? "Updating..." : "Update"}
                 </button>
-                
+
                 <button
                     onClick={handleCancel}
                     className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-900 disabled:opacity-50 disabled:cursor-not-allowed"

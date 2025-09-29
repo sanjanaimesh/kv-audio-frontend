@@ -1,109 +1,114 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const sampleArr = [
-    {
-        key: "prod001",
-        name: "Wireless Headphones",
-        price: 12000,
-        category: "audio",
-        dimensions: "20 x 18 x 8 cm",
-        descrition: "High-quality wireless headphones with noise cancellation.",
-        availability: "available",
-        image: [
-            "https://via.placeholder.com/150/0000FF/808080?text=Headphones",
-            "https://via.placeholder.com/150/FF0000/FFFFFF?text=Headphones+2"
-        ]
-    },
-    {
-        key: "prod002",
-        name: "Bluetooth Speaker",
-        price: 8500,
-        category: "audio",
-        dimensions: "15 x 10 x 10 cm",
-        descrition: "Portable Bluetooth speaker with deep bass and waterproof design.",
-        availability: "available",
-        image: [
-            "https://via.placeholder.com/150/008000/FFFFFF?text=Speaker"
-        ]
-    },
-    {
-        key: "prod003",
-        name: "LED Stage Light",
-        price: 25000,
-        category: "light",
-        dimensions: "30 x 25 x 20 cm",
-        descrition: "Professional LED stage light with multiple color modes.",
-        availability: "available",
-        image: [
-            "https://via.placeholder.com/150/FFD700/000000?text=Stage+Light"
-        ]
-    },
-    {
-        key: "prod004",
-        name: "Studio Microphone",
-        price: 18000,
-        category: "audio",
-        dimensions: "12 x 6 x 6 cm",
-        descrition: "Studio-grade condenser microphone for recording and streaming.",
-        availability: "available",
-        image: [
-            "https://via.placeholder.com/150/FF69B4/000000?text=Microphone"
-        ]
-    },
-    {
-        key: "prod005",
-        name: "Smart LED Strip",
-        price: 6000,
-        category: "light",
-        dimensions: "500 cm (length)",
-        descrition: "RGB smart LED strip light with app and voice control support.",
-        availability:"available",
-        image: [
-            "https://via.placeholder.com/150/00FFFF/000000?text=LED+Strip"
-        ]
-    }
-];
+
 
 export default function AdminItemPage() {
-    const [items, setItem] = useState(sampleArr);
-    
+    const [items, setItems] = useState([]);
+    const [itemsLoaded, setItemLoaded] = useState(false);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!itemsLoaded) {
+
+            const token = localStorage.getItem("token");
+
+            axios
+                .get("http://localhost:3000/api/products", {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                .then((res) => {
+                    console.log(res.data);
+                    setItems(res.data);
+                    setItemLoaded(true);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+
+    }, [itemsLoaded]);
+
+    const handleDelete = (key) => {
+        if (window.confirm("Are you sure you want to delete this item?")) {
+            setItems(items.filter((item) => item.key !== key));  
+            const token = localStorage.getItem("token");
+            axios.delete(`http://localhost:3000/api/products/${key}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            }).then(
+                (res) => {
+                    console.log(res.data);
+                    setItemLoaded(false)
+                }
+            ).catch((err) => {
+                console.log(err);
+            })
+
+
+        }
+    };
+
     return (
-        <div className="w-full h-full relative">
-            <table>
-                <thead>
-                    <tr>
-                        <th>key</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Category</th>
-                        <th>Dimensions</th>
-                        <th>Availability</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        items.map((product) => {
-                            console.log(product)
-                            return (
-                                <tr key={product.key}>
-                                    <td>{product.key}</td>
-                                    <td>{product.name}</td>
-                                    <td>{product.price}</td>
-                                    <td>{product.category}</td>
-                                    <td>{product.dimensions}</td>
-                                    <td>{product.availability}</td>
-                                </tr>
-                        
-                            )
-                        })
-                    }
-                </tbody>
-            </table>
+        <div className="w-full h-full relative p-6 bg-gray-100">
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <table className="w-full border-collapse text-left">
+                    <thead className="bg-blue-600 text-white">
+                        <tr>
+                            <th className="p-3">Key</th>
+                            <th className="p-3">Name</th>
+                            <th className="p-3">Price</th>
+                            <th className="p-3">Category</th>
+                            <th className="p-3">Dimensions</th>
+                            <th className="p-3">Availability</th>
+                            <th className="p-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {items.map((product, idx) => (
+                            <tr
+                                key={product.key}
+                                className={`border-b hover:bg-gray-50 transition ${idx % 2 === 0 ? "bg-gray-50" : "bg-white"
+                                    }`}
+                            >
+                                <td className="p-3 font-mono text-sm text-gray-700">{product.key}</td>
+                                <td className="p-3 font-medium text-gray-900">{product.name}</td>
+                                <td className="p-3 text-gray-700">LKR {product.price}</td>
+                                <td className="p-3 capitalize text-gray-700">{product.category}</td>
+                                <td className="p-3 text-gray-600">{product.dimensions}</td>
+                                <td className="p-3">
+                                    <span
+                                        className={`px-2 py-1 text-xs font-semibold rounded-full ${product.availability === "available"
+                                                ? "bg-green-100 text-green-700"
+                                                : "bg-red-100 text-red-700"
+                                            }`}
+                                    >
+                                        {product.availability === "available"
+                                            ? "Available"
+                                            : "Not Available"}
+                                    </span>
+                                </td>
+                                <td className="p-3 flex gap-2 justify-center">
+                                    <button onClick={() => navigate(`/admin/items/edit`, {state:product})} className="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition">Edit</button>
+                                    
+                                    <button
+                                        onClick={() => handleDelete(product.key)}
+                                        className="px-3 py-1 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Add Button */}
             <Link to="/admin/items/add">
-                <CiCirclePlus className="text-[100px] text-blue-700 absolute right-2 bottom-2 hover:text-red-800 " />
+                <CiCirclePlus className="text-[80px] text-blue-600 absolute right-6 bottom-6 cursor-pointer hover:text-red-600 transition" />
             </Link>
         </div>
-    )
+    );
 }
