@@ -1,0 +1,3 @@
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4bXN3Z2V1Y3BoZG11bXplY3JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyMjQwNDUsImV4cCI6MjA3NDgwMDA0NX0.9oBDZhvizdGJmi6sMGAX2L-SoEy6M6jAazWnzQpaDhk - anon public key
+
+https://pxmswgeucphdmumzecrb.supabase.co - project url
