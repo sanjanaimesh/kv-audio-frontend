@@ -2,6 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import mediaUpload from "../../utils/meadiaUpload";
 
 export default function AddProductPage() {
     const [productKey, setProductKey] = useState("");
@@ -10,18 +11,29 @@ export default function AddProductPage() {
     const [productCategory, setProductCategory] = useState("audio");
     const [productDimension, setProductDimension] = useState("");
     const [productDescription, setProductDescription] = useState("");
+    const [productImages, setProductImages] = useState([])
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     async function handleAddItem() {
-        // Validation
+
+        console.log(productImages)
+        const promises = []
+        for (let i = 0; i < productImages.length; i++) {
+            console.log(productImages[i])
+            const promise = mediaUpload(productImages[i])
+            promises.push(promise)
+        }
+
+
+
         if (!productKey || !productName || !productPrice || !productDimension || !productDescription) {
             toast.error("Please fill all fields");
             return;
         }
 
         const token = localStorage.getItem("token");
-        
+
         if (!token) {
             toast.error("Please login first");
             return;
@@ -30,6 +42,17 @@ export default function AddProductPage() {
         setLoading(true);
 
         try {
+            // Promise.all(promises).then(
+            //     (result) => {
+            //         console.log(result)
+            //     }
+            // ).catch(
+            //     (err) => {
+            //         console.log(err)
+            //         toast.err(err)
+            //     }
+            // )
+            const imageUrl = await Promise.all(promises)
             const result = await axios.post(
                 "http://localhost:3000/api/products",
                 {
@@ -38,7 +61,8 @@ export default function AddProductPage() {
                     price: Number(productPrice),
                     category: productCategory,
                     dimensions: productDimension,
-                    descrition: productDescription
+                    descrition: productDescription,
+                    image : imageUrl
                 },
                 {
                     headers: {
@@ -50,7 +74,7 @@ export default function AddProductPage() {
             console.log(result);
             toast.success("Product added successfully!");
             navigate("/admin/items", { replace: true });
-            
+
         } catch (error) {
             console.error(error);
             if (error.response) {
@@ -126,24 +150,25 @@ export default function AddProductPage() {
                     className="border px-3 py-2 rounded"
                     disabled={loading}
                 />
+                <input type="file" multiple onChange={(e) => { setProductImages(e.target.files) }} />
 
-                <button 
+                <button
                     onClick={handleAddItem}
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={loading}
                 >
                     {loading ? "Adding..." : "Add"}
                 </button>
-                
+
                 <button
-                    onClick={handleCancel}
+                    //onClick={handleCancel}
                     className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-900 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={loading}
                 >
                     Cancel
                 </button>
 
-                
+
             </div>
         </div>
     );
