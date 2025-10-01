@@ -12,6 +12,7 @@ export default function AddProductPage() {
     const [productDimension, setProductDimension] = useState("");
     const [productDescription, setProductDescription] = useState("");
     const [productImages, setProductImages] = useState([])
+    
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -161,7 +162,7 @@ export default function AddProductPage() {
                 </button>
 
                 <button
-                    //onClick={handleCancel}
+                    onClick={handleCancel}
                     className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-900 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={loading}
                 >

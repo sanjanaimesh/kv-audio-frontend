@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function ProductCard({ item }) {
   return (
     <div className="w-80 bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl m-4">
@@ -65,12 +67,12 @@ export default function ProductCard({ item }) {
               ${item.price}
             </span>
           </div>
-          <button 
+          <Link to={"/product/"+item.key}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
-            disabled={!item.availability}
+            
           >
-            Rent Now
-          </button>
+            View Details
+          </Link>
         </div>
       </div>
     </div>

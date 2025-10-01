@@ -2,6 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import mediaUpload from "../../utils/meadiaUpload";
 
 export default function UpdateItemPage() {
     const location = useLocation();   
@@ -13,9 +14,24 @@ export default function UpdateItemPage() {
     const [productCategory, setProductCategory] = useState(location.state?.category || "audio");
     const [productDimension, setProductDimension] = useState(location.state?.dimensions || "");
     const [productDescription, setProductDescription] = useState(location.state?.descrition || "");
+    const [productImages, setProductImages] = useState([])
     const [loading, setLoading] = useState(false);
 
     async function handleUpdateItem() {
+
+        let updatingImages = location.state.image
+        if(productImages.length  > 0){
+            const promises = []
+                    for (let i = 0; i < productImages.length; i++) {
+                        console.log(productImages[i])
+                        const promise = mediaUpload(productImages[i])
+                        promises.push(promise)
+                    }
+
+                     updatingImages = await Promise.all(promises)
+            
+        }
+
         if (!productKey || !productName || !productPrice || !productDimension || !productDescription) {
             toast.error("Please fill all fields");
             return;
@@ -32,12 +48,14 @@ export default function UpdateItemPage() {
         try {
             const result = await axios.put(   
                 `http://localhost:3000/api/products/${productKey}`,
+                
                 {
                     name: productName,
                     price: Number(productPrice),
                     category: productCategory,
                     dimensions: productDimension,
                     descrition: productDescription,
+                    image : updatingImages
                 },
                 {
                     headers: {
@@ -125,6 +143,8 @@ export default function UpdateItemPage() {
                     className="border px-3 py-2 rounded"
                     disabled={loading}
                 />
+
+                 <input type="file" multiple onChange={(e) => { setProductImages(e.target.files) }} />
 
                 <button
                     onClick={handleUpdateItem}

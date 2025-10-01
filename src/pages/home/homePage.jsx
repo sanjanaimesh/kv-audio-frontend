@@ -5,6 +5,7 @@ import Gallery from "./gallery";
 import Item from "./items";
 import Home from "./home";
 import ErrorNotFound from "./error";
+import ProductOverview from "./productOverview";
 
 export default function HomePage() {
     return (
@@ -16,6 +17,7 @@ export default function HomePage() {
                     <Route path="/contact" element={<Contact/>}></Route>
                     <Route path="/gallery" element={<Gallery/>}></Route>
                     <Route path="/items" element={<Item/>}></Route>
+                    <Route path="/product/:key" element={<ProductOverview/>}></Route>
                     <Route path="/" element={<Home/>}></Route>
                     <Route path="/*" element={<ErrorNotFound/>}></Route>
                 </Routes>
