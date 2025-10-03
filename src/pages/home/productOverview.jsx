@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
+import { addToCart, loadCart } from "../../utils/cart";
 
 
 export default function ProductOverview() {
@@ -100,7 +101,7 @@ export default function ProductOverview() {
 
                             <div className="mb-6">
                                 <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                                    විස්තරය
+                                    Details
                                 </h3>
                                 <p className="text-gray-600 leading-relaxed">
                                     {product.descrition}
@@ -137,6 +138,10 @@ export default function ProductOverview() {
                             </div>
 
                             <button 
+                                onClick={()=>{
+                                    addToCart(product.key,1);
+                                    console.log(loadCart())
+                                }}
                                 disabled={!product.availability}
                                 className={`w-full py-3 px-6 rounded-lg font-semibold text-white transition-colors ${
                                     product.availability 
